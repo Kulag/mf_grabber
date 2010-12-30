@@ -112,7 +112,7 @@ sub mf_chapter($) {
 sub cli_parse(@) {
 	return say 'No arguments. Paste some mangafox manga urls.' if !@_;
 	for (@_) {
-		if (m!$baseurl/manga/\w+/c\d+!) {
+		if (m!$baseurl/manga/\w+/v\d+/c\d+!) {
 			mf_chapter $_;
 		}
 		elsif (m!$baseurl/manga/\w+!) {
