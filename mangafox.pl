@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 package mf;
 
 use v5.10;
@@ -10,7 +11,8 @@ use Mojo::DOM;
 
 my $dir = join '/', File::Spec->splitdir(dirname(__FILE__));
 
-sub DEBUG() { $ENV{DEBUG} // 0 }
+sub DEBUG() { $ENV{DEBUG} // 1 }
+sub CACHE() { $ENV{CACHE} // 1 }
 sub MAX_ACTIVE_REQUESTS() { $ENV{MAX_ACTIVE_REQUESTS} // 5 }
 my $active_requests;
 my $baseurl = 'http://www.mangafox.com';
@@ -30,19 +32,19 @@ sub _http($&;$) {
 		push @backlog, [@_];
 		return;
 	}
-	
+
 	my ($url, $cb, $cfile) = @_;
-	
+
 	$active_requests++;
-	
+
 	DEBUG and say "GET $url";
 	http_get $url, recurse => 10, sub {
 		my ($data, $headers) = @_;
 		DEBUG and say "GOT $url";
-			
+
 		die "http error: $headers->{Status} $headers->{Reason}" unless $headers->{Status} =~ /^2/;
 		$data > io($cfile) if $cfile;
-		
+
 		$active_requests--;
 		$cb->($data);
 		_http(@{shift @backlog}) if @backlog;
@@ -52,7 +54,7 @@ sub _http($&;$) {
 sub http($&;$) {
 	my $url = shift;
 	my $cb = shift;
-	my $cache = shift // DEBUG;
+	my $cache = shift // CACHE;
 	
 	my $cfile;
 	if ($cache) {
