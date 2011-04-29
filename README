@@ -6,5 +6,4 @@ mangafox.pl <manga chapter url>
 NOTES
 Debugging is on by default because there's no display yet otherwise.
 There is no error handling in the http client, you should probably run the same command again after it finishes to fill in any missing images.
-The client doesn't exit properly. You'll have to kill it once it looks like it's done.
 If you want to get manga with the warning on them, you have to use the ?no_warning=1 url or the grabber won't find any chapters.
